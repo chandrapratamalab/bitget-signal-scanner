@@ -1,7 +1,13 @@
-# Bitget Futures Public Signal Scanner
+# Bitget Futures Public Signal Scanner V 1.0
 
 Local scanner that ranks USDT perpetual pairs and produces manual trade signals
 with entry, SL, and TP levels. Data is pulled from Bitget public endpoints.
+
+## Model
+
+This project does not use a machine learning model. Signals are generated with
+rule-based technical analysis (EMA trend regime, break+retest entry, ATR/swing
+stop loss, and R-multiple take profits).
 
 **Author:** Chandra Pratama
 
