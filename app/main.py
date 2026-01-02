@@ -13,6 +13,12 @@ from core.data.bitget_client import BitgetClient
 from core.scanner.pipeline import run_scan
 
 
+def _with_rank(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.reset_index(drop=True)
+    df.insert(0, "No", range(1, len(df) + 1))
+    return df
+
+
 def _build_settings() -> Settings:
     defaults = default_settings()
     with st.sidebar:
@@ -69,25 +75,29 @@ def main() -> None:
 
         st.subheader("Top Pairs")
         if stage2:
-            st.dataframe(pd.DataFrame(stage2))
+            st.dataframe(_with_rank(pd.DataFrame(stage2)), hide_index=True)
         else:
             st.info("No pairs passed the filters.")
 
         st.subheader("Signals")
         if signals:
             st.dataframe(
-                pd.DataFrame(signals)[
-                    [
-                        "symbol",
-                        "direction",
-                        "entry_time",
-                        "entry_price",
-                        "sl",
-                        "tp1",
-                        "tp2",
-                        "entry_status",
+                _with_rank(
+                    pd.DataFrame(signals)[
+                        [
+                            "symbol",
+                            "direction",
+                            "entry_time",
+                            "entry_price",
+                            "sl",
+                            "tp1",
+                            "tp2",
+                            "recommended_leverage_cap",
+                            "entry_status",
+                        ]
                     ]
-                ]
+                ),
+                hide_index=True,
             )
             for signal in signals:
                 with st.expander(f"{signal['symbol']} ({signal['direction']})"):

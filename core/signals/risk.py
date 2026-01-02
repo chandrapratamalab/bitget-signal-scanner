@@ -24,16 +24,25 @@ def compute_risk(
     if math.isnan(atr_value):
         atr_value = 0.0
 
-    entry_low = float(entry_plan["entry_zone_low"])
-    entry_high = float(entry_plan["entry_zone_high"])
     entry_price = float(entry_plan["entry_price"])
 
     if direction == "LONG":
         swing_low = recent_swing_low(candles_15m, swing_lookback)
-        sl_atr = entry_low - atr_mult * atr_value
-        sl_swing = swing_low if swing_low > 0 else sl_atr
-        sl = min(sl_atr, sl_swing) if atr_value > 0 else sl_swing
-        sl_reason = "ATR" if sl == sl_atr else "swing"
+        sl = None
+        if swing_low > 0:
+            if atr_value > 0:
+                sl = swing_low - atr_mult * atr_value
+                sl_reason = "swing_atr"
+            else:
+                sl = swing_low
+                sl_reason = "swing"
+        elif atr_value > 0:
+            sl = entry_price - atr_mult * atr_value
+            sl_reason = "atr"
+        else:
+            return None
+        if sl <= 0:
+            return None
         risk = entry_price - sl
         if risk <= 0:
             return None
@@ -41,10 +50,21 @@ def compute_risk(
         tp2 = entry_price + 2 * risk
     else:
         swing_high = recent_swing_high(candles_15m, swing_lookback)
-        sl_atr = entry_high + atr_mult * atr_value
-        sl_swing = swing_high if swing_high > 0 else sl_atr
-        sl = max(sl_atr, sl_swing) if atr_value > 0 else sl_swing
-        sl_reason = "ATR" if sl == sl_atr else "swing"
+        sl = None
+        if swing_high > 0:
+            if atr_value > 0:
+                sl = swing_high + atr_mult * atr_value
+                sl_reason = "swing_atr"
+            else:
+                sl = swing_high
+                sl_reason = "swing"
+        elif atr_value > 0:
+            sl = entry_price + atr_mult * atr_value
+            sl_reason = "atr"
+        else:
+            return None
+        if sl <= 0:
+            return None
         risk = sl - entry_price
         if risk <= 0:
             return None
@@ -56,5 +76,5 @@ def compute_risk(
         "sl_reason": sl_reason,
         "tp1": tp1,
         "tp2": tp2,
+        "atr_15m": atr_value,
     }
-

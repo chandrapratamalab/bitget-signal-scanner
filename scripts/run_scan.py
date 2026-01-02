@@ -19,11 +19,19 @@ def main() -> None:
         return
 
     df = pd.DataFrame(signals)[
-        ["symbol", "direction", "entry_time", "entry_price", "sl", "tp1", "tp2"]
+        [
+            "symbol",
+            "direction",
+            "entry_time",
+            "entry_price",
+            "sl",
+            "tp1",
+            "tp2",
+            "recommended_leverage_cap",
+        ]
     ]
     print(df.to_string(index=False))
 
 
 if __name__ == "__main__":
     main()
-

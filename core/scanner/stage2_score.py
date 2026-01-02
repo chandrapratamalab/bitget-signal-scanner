@@ -9,9 +9,10 @@ from core.utils.math import safe_div
 
 def score_stage2(
     client: BitgetClient, candidates: list[dict], settings: Settings
-) -> tuple[list[dict], dict[str, object]]:
+) -> tuple[list[dict], dict[str, object], dict[str, object]]:
     scored: list[dict] = []
     candles_4h_cache: dict[str, object] = {}
+    candles_1h_cache: dict[str, object] = {}
 
     for candidate in candidates:
         symbol = candidate["symbol"]
@@ -63,7 +64,7 @@ def score_stage2(
             }
         )
         candles_4h_cache[symbol] = candles_4h
+        candles_1h_cache[symbol] = candles_1h
 
     scored.sort(key=lambda item: item["score"], reverse=True)
-    return scored[: settings.top_k], candles_4h_cache
-
+    return scored[: settings.top_k], candles_4h_cache, candles_1h_cache
