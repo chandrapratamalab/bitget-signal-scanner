@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from core.config.settings import default_settings
 from core.data.bitget_client import BitgetClient
 from core.scanner.pipeline import run_scan
+from core.utils.io import build_signals_export_df
 
 
 def main() -> None:
@@ -25,7 +26,12 @@ def main() -> None:
         print("No trade signals generated.")
         return
 
-    df = pd.DataFrame(signals)[
+    print(
+        "entry_time = close time candle 15m terakhir yang dipakai untuk evaluasi entry "
+        "(bukan waktu wajib entry)."
+    )
+    export_df = build_signals_export_df(signals)
+    df = export_df[
         [
             "symbol",
             "direction",
