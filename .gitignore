@@ -7,7 +7,7 @@ __pycache__/
 venv/
 env/
 .env
-data/
+/data/
 api.endpoint.md
 PRD.md
 update_sistem_v1.md
