@@ -1,0 +1,15 @@
+GET /api/v2/mix/market/contracts
+GET /api/v2/mix/market/ticker
+GET /api/v2/mix/market/tickers
+GET /api/v2/mix/market/candles
+GET /api/v2/mix/market/history-candles
+GET /api/v2/mix/market/history-index-candles
+GET /api/v2/mix/market/history-mark-candles
+GET /api/v2/mix/market/merge-depth
+GET /api/v2/mix/market/fills
+GET /api/v2/mix/market/fills-history
+GET /api/v2/mix/market/funding-time
+GET /api/v2/mix/market/current-fund-rate
+GET /api/v2/mix/market/history-fund-rate
+GET /api/v2/mix/market/open-interest
+GET /api/v2/mix/market/query-position-lever

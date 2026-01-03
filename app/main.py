@@ -11,6 +11,7 @@ if PROJECT_ROOT not in sys.path:
 from core.config.settings import Settings, default_settings
 from core.data.bitget_client import BitgetClient
 from core.scanner.pipeline import run_scan
+from core.utils.io import build_signals_export_df
 
 
 def _with_rank(df: pd.DataFrame) -> pd.DataFrame:
@@ -52,9 +53,14 @@ def _build_settings() -> Settings:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Bitget Signal Scanner", layout="wide")
-    st.title("Bitget Futures Public Signal Scanner")
+    st.set_page_config(page_title="Chloe Scan", layout="wide")
+    st.title("Chloe Scan Signal Futures Trade in Bitget")
     st.caption("Manual trade signals with entry, SL, and TP levels.")
+
+    if "scan_results" not in st.session_state:
+        st.session_state.scan_results = None
+    if "signals_export_df" not in st.session_state:
+        st.session_state.signals_export_df = None
 
     settings = _build_settings()
     run = st.button("Run Scan")
@@ -70,6 +76,11 @@ def main() -> None:
         finally:
             client.close()
 
+        st.session_state.scan_results = results
+        st.session_state.signals_export_df = build_signals_export_df(results.get("signals", []))
+
+    results = st.session_state.scan_results
+    if results:
         stage2 = results.get("stage2", [])
         signals = results.get("signals", [])
 
@@ -80,10 +91,27 @@ def main() -> None:
             st.info("No pairs passed the filters.")
 
         st.subheader("Signals")
+        st.caption(
+            "entry_time = close time candle 15m terakhir yang dipakai untuk evaluasi entry "
+            "(bukan waktu wajib entry)."
+        )
         if signals:
+            export_df = st.session_state.signals_export_df
+            if export_df is None or export_df.empty:
+                export_df = build_signals_export_df(signals)
+                st.session_state.signals_export_df = export_df
+            export_records = export_df.where(pd.notnull(export_df), None).to_dict(orient="records")
+            download_csv = export_df.to_csv(index=False)
+            st.download_button(
+                "Download Signals (CSV)",
+                download_csv,
+                file_name="signals.csv",
+                mime="text/csv",
+            )
+            st.caption("Download tidak menghapus hasil scan pada halaman ini.")
             st.dataframe(
                 _with_rank(
-                    pd.DataFrame(signals)[
+                    export_df[
                         [
                             "symbol",
                             "direction",
@@ -99,11 +127,13 @@ def main() -> None:
                 ),
                 hide_index=True,
             )
-            for signal in signals:
+            for signal in export_records:
                 with st.expander(f"{signal['symbol']} ({signal['direction']})"):
                     st.json(signal)
         else:
             st.info("No valid trade signals generated.")
+    else:
+        st.info("Click Run Scan untuk memulai pemindaian pasar.")
 
 
 if __name__ == "__main__":

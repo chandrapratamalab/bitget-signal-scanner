@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import pandas as pd
 
+from core.config.constants import GRANULARITY_SECONDS
 from core.features.swing import recent_swing_high, recent_swing_low
 from core.utils.time import to_datetime_ms
+
+CANDLE_SECONDS_15M = GRANULARITY_SECONDS["15m"]
 
 
 def build_entry_plan(
@@ -17,7 +20,8 @@ def build_entry_plan(
 
     last_close = float(candles_15m["close"].iloc[-1])
     last_ts = int(candles_15m["ts"].iloc[-1])
-    entry_time = to_datetime_ms(last_ts).isoformat()
+    entry_close_ts = last_ts + (CANDLE_SECONDS_15M * 1000)
+    entry_time = to_datetime_ms(entry_close_ts).isoformat()
 
     if direction == "LONG":
         level = recent_swing_high(candles_15m, swing_lookback)
@@ -45,4 +49,3 @@ def build_entry_plan(
         "entry_time": entry_time,
         "invalidation": invalidation,
     }
-

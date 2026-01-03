@@ -62,6 +62,7 @@ def generate_signal(
         quote_volume=quote_volume,
     )
 
+    generated_at = now_utc_iso()
     return {
         "symbol": symbol,
         "regime": regime_info.get("regime", "NO_TRADE"),
@@ -86,5 +87,6 @@ def generate_signal(
         "setup_reason": setup["setup_reason"],
         "key_level": setup["key_level"],
         "invalidation": entry_plan["invalidation"],
-        "generated_at": now_utc_iso(),
+        "generated_at": generated_at,
+        "signal_time": generated_at,
     }
