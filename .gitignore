@@ -8,4 +8,6 @@ venv/
 env/
 .env
 data/
-
+api.endpoint.md
+PRD.md
+update_sistem_v1.md
