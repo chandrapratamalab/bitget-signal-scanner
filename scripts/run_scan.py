@@ -27,20 +27,29 @@ def main() -> None:
         return
 
     print(
-        "entry_time = close time candle 15m terakhir yang dipakai untuk evaluasi entry "
+        "entry_time = close time candle trigger terakhir yang dipakai untuk evaluasi entry "
         "(bukan waktu wajib entry)."
     )
     export_df = build_signals_export_df(signals)
     df = export_df[
         [
             "symbol",
+            "scan_mode",
+            "regime",
             "direction",
+            "entry_status",
             "entry_time",
             "entry_price",
+            "entry_zone",
             "sl",
             "tp1",
             "tp2",
             "recommended_leverage_cap",
+            "confidence_score",
+            "funding_rate",
+            "open_interest",
+            "oi_change_pct",
+            "risk_flags",
         ]
     ]
     print(df.to_string(index=False))

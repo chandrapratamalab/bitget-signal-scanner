@@ -6,7 +6,7 @@ from core.utils.time import WIB_OFFSET_MINUTES, now_utc_iso, to_wib_string
 
 TIME_COLUMNS = ("run_timestamp", "entry_time", "generated_at", "signal_time")
 DECIMAL_4_COLUMNS = ("entry_zone_low", "entry_zone_high", "sl", "tp1", "tp2")
-PERCENT_COLUMNS = ("sl_distance_pct", "atr_pct")
+PERCENT_COLUMNS = ("sl_distance_pct", "atr_pct", "funding_rate", "oi_change_pct")
 
 
 def _format_decimal(value) -> str | None:
@@ -42,6 +42,10 @@ def build_signals_export_df(signals: list[dict]) -> pd.DataFrame:
         rows.append(row)
 
     df = pd.DataFrame(rows)
+    if "risk_flags" in df.columns:
+        df["risk_flags"] = df["risk_flags"].apply(
+            lambda value: ", ".join(value) if isinstance(value, list) else value
+        )
     for column in TIME_COLUMNS:
         if column in df.columns:
             df[column] = df[column].apply(to_wib_string)

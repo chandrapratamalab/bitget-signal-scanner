@@ -65,6 +65,22 @@ class BitgetClient:
         raw = self._get(ENDPOINTS["candles"], params)
         return _candles_to_df(raw)
 
+    def get_merge_depth(
+        self, symbol: str, product_type: str, limit: int | None = None
+    ) -> Any:
+        params = {"symbol": symbol, "productType": product_type}
+        if limit is not None:
+            params["limit"] = limit
+        return self._get(ENDPOINTS["merge_depth"], params)
+
+    def get_open_interest(self, symbol: str, product_type: str) -> Any:
+        params = {"symbol": symbol, "productType": product_type}
+        return self._get(ENDPOINTS["open_interest"], params)
+
+    def get_current_funding_rate(self, symbol: str, product_type: str) -> Any:
+        params = {"symbol": symbol, "productType": product_type}
+        return self._get(ENDPOINTS["current_fund_rate"], params)
+
 
 def _candles_to_df(raw: Any) -> pd.DataFrame:
     rows: list[dict] = []
@@ -105,4 +121,3 @@ def _candles_to_df(raw: Any) -> pd.DataFrame:
     if not df.empty:
         df = df.sort_values("ts").reset_index(drop=True)
     return df
-

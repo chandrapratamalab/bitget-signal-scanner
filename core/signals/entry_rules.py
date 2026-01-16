@@ -6,21 +6,19 @@ from core.config.constants import GRANULARITY_SECONDS
 from core.features.swing import recent_swing_high, recent_swing_low
 from core.utils.time import to_datetime_ms
 
-CANDLE_SECONDS_15M = GRANULARITY_SECONDS["15m"]
-
-
 def build_entry_plan(
     direction: str,
     candles_15m: pd.DataFrame,
     swing_lookback: int,
     entry_buffer_pct: float,
+    granularity_seconds: int = GRANULARITY_SECONDS["15m"],
 ) -> dict | None:
     if direction == "NO_TRADE" or candles_15m is None or candles_15m.empty:
         return None
 
     last_close = float(candles_15m["close"].iloc[-1])
     last_ts = int(candles_15m["ts"].iloc[-1])
-    entry_close_ts = last_ts + (CANDLE_SECONDS_15M * 1000)
+    entry_close_ts = last_ts + (granularity_seconds * 1000)
     entry_time = to_datetime_ms(entry_close_ts).isoformat()
 
     if direction == "LONG":
