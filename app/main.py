@@ -444,7 +444,7 @@ def _build_settings() -> Settings:
 def main() -> None:
     st.set_page_config(page_title="Chloe Scan", layout="wide")
     st.title("Chloe Scan Market Futures Trade in Bitget")
-    st.caption("Manual trade signals with entry, SL, and TP levels.")
+    st.caption("Simulasi pemindaian pasar untuk menemukan peluang trade futures.")
 
     if "scan_results" not in st.session_state:
         st.session_state.scan_results = None
